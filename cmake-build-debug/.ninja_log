@@ -1,0 +1,8 @@
+# ninja log v5
+1	1490	7368041282349820	CMakeFiles/sopek_marjetic.dir/main.cpp.obj	52dfef20e7b87153
+6	1503	7368041282490852	CMakeFiles/sopek_marjetic.dir/BruteForceResitev.cpp.obj	dffbe2b10aa39f57
+4	397	7368045093284546	CMakeFiles/sopek_marjetic.dir/main.cpp.obj	52dfef20e7b87153
+4	419	7368046273882346	CMakeFiles/sopek_marjetic.dir/main.cpp.obj	52dfef20e7b87153
+420	846	7368046278040164	sopek_marjetic.exe	ea7f025314f95bf3
+3	541	7368059756375684	CMakeFiles/sopek_marjetic.dir/BruteForceResitev.cpp.obj	dffbe2b10aa39f57
+542	1047	7368059761296175	sopek_marjetic.exe	ea7f025314f95bf3
