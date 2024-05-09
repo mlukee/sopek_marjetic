@@ -4,6 +4,8 @@
 #include <chrono>
 #include <iomanip>
 #include <string>
+#include <windows.h>
+#include <psapi.h>
 
 struct Node {
     size_t valueCount, gcdValue;
@@ -29,7 +31,9 @@ size_t updateSegmentTree(size_t nodeIndex, size_t updateIndex, size_t segmentSta
     }
     size_t mid = (segmentStart + segmentEnd) / 2;
     size_t leftGCD = updateSegmentTree(2 * nodeIndex, updateIndex, segmentStart, mid, deltaValue);
+    // std::cout  << "updateSegmentTree(" << 2 * nodeIndex + 1 << ", " << updateIndex << ", " << mid << ", " << segmentEnd << ", " << deltaValue << ")\n";
     size_t rightGCD = updateSegmentTree(2 * nodeIndex + 1, updateIndex, mid, segmentEnd, deltaValue);
+    // std::cout << "updateSegmentTree(" << 2 * nodeIndex + 1 << ", " << updateIndex << ", " << mid << ", " << segmentEnd << ", " << deltaValue << ")\n";
     size_t combinedGCD = computeGCD(leftGCD, rightGCD);
     segmentTree[nodeIndex].gcdValue = combinedGCD;
     return combinedGCD;
@@ -81,8 +85,10 @@ void processFile(const std::string& inputFile, const std::string& outputFile) {
     out.close();
 }
 
+
+
 int main() {
-    for (size_t i = 1; i <= 13; ++i) {
+    for (size_t i = 1; i <= 14; ++i) {
         if (i == 7 || i == 11) continue;  // Skip files 7 and 11 as per your requirement
         std::string inputFile = "test_cases\\marjetice" + (i < 10 ? "0" + std::to_string(i) : std::to_string(i)) + ".in";
         std::string outputFile = "test_cases\\marjetice" + (i < 10 ? "0" + std::to_string(i) : std::to_string(i)) + ".out";
