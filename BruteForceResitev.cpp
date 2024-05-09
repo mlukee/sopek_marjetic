@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <chrono>
+#include <iomanip>
+#include <string>
 
 int gcd(int a, int b) {
     while (b != 0) {
@@ -9,17 +12,13 @@ int gcd(int a, int b) {
     }
     return a;
 }
-// C:\POT\sopek_marjetic\cmake-build-debug\sopek_marjetic.exe ./test.txt | Out-File out.txt
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <input_file>" << std::endl;
-        return 1;
-    }
 
-    std::ifstream inFile(argv[1]);
-    if (!inFile.is_open()) {
-        std::cerr << "Error opening file: " << argv[1] << std::endl;
-        return 2;
+void processGCDFile(const std::string& inputFile, const std::string& outputFile) {
+    std::ifstream inFile(inputFile);
+    std::ifstream expectedFile(outputFile);
+    if (!inFile.is_open() || !expectedFile.is_open()) {
+        std::cerr << "Failed to open file: " << inputFile << " or " << outputFile << std::endl;
+        return;
     }
 
     int q;
@@ -27,14 +26,20 @@ int main(int argc, char* argv[]) {
 
     std::map<int, int> petalCount;
     int currentGCD = 0;
+    bool correct = true;
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     for (int i = 0; i < q; i++) {
         char operation;
         int n;
         inFile >> operation >> n;
 
+        int expectedGCD;
+        expectedFile >> expectedGCD;
+
         if (operation == '+') {
-            if (petalCount[n] == 0) {
+            if (petalCount[n] == 0) {  // Only update GCD if this petal count was zero before addition
                 if (currentGCD == 0) {
                     currentGCD = n;
                 } else {
@@ -43,29 +48,46 @@ int main(int argc, char* argv[]) {
             }
             petalCount[n]++;
         } else if (operation == '-') {
-            if (--petalCount[n] == 0) {
+            petalCount[n]--;
+            if (petalCount[n] == 0) {  // Petal completely removed, need to recalculate GCD
                 petalCount.erase(n);
-
-                if (petalCount.empty()) {
-                    currentGCD = 0;
-                } else {
-                    auto it = petalCount.begin();
-                    currentGCD = it->first;
-                    for (++it; it != petalCount.end(); ++it) {
-                        currentGCD = gcd(currentGCD, it->first);
-                        if (currentGCD == 1) break;
+                currentGCD = 0;
+                for (auto& p : petalCount) {
+                    if (currentGCD == 0) {
+                        currentGCD = p.first;
+                    } else {
+                        currentGCD = gcd(currentGCD, p.first);
+                        if (currentGCD == 1) break;  // Short-circuit if GCD is 1
                     }
                 }
             }
         }
 
-        if (currentGCD == 0 || petalCount.empty()) {
-            std::cout << 1 << std::endl;
-        } else {
-            std::cout << currentGCD << std::endl;
+        int outputGCD = (currentGCD == 0 || petalCount.empty()) ? 1 : currentGCD;
+        if (outputGCD != expectedGCD) {
+            correct = false;
+            std::cout << "Mismatch at operation " << i + 1 << ": Expected " << expectedGCD << ", got " << outputGCD << std::endl;
         }
     }
 
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    std::cout << inputFile << ": " << (correct ? "Correct" : "Incorrect") << ", Time: " << std::fixed << std::setprecision(6) << elapsed.count() << "s\n";
+
     inFile.close();
+    expectedFile.close();
+}
+
+
+
+int main() {
+    for (int i = 1; i <= 13; ++i) {
+        if(i==7 || i==11) continue; // Skip files 7 and 11 (as per your requirement
+        std::string index = (i < 10 ? "0" + std::to_string(i) : std::to_string(i));
+        std::string inputFile = "test_cases\\marjetice" + index + ".in";
+        std::string outputFile = "test_cases\\marjetice" + index + ".out";
+        processGCDFile(inputFile, outputFile);
+    }
     return 0;
 }
