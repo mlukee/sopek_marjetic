@@ -1,93 +1,61 @@
 #include <iostream>
 #include <fstream>
-#include <map>
-#include <chrono>
-#include <iomanip>
-#include <string>
+#include <vector>
+#include <numeric> // for std::gcd
+#include <algorithm> // for std::find
 
-int gcd(int a, int b) {
-    while (b != 0) {
-        a %= b;
-        std::swap(a, b);
+int calculateGCD(const std::vector<int>& numbers) {
+    if (numbers.empty()) return 0;
+    int result = numbers[0];
+    for (int num : numbers) {
+        result = std::gcd(result, num);
     }
-    return a;
+    return result;
 }
 
-void processGCDFile(const std::string& inputFile, const std::string& outputFile) {
+void processGCDFileBruteForce(const std::string& inputFile, const std::string& outputFile) {
     std::ifstream inFile(inputFile);
-    std::ifstream expectedFile(outputFile);
-    if (!inFile.is_open() || !expectedFile.is_open()) {
+    std::ofstream outFile(outputFile);
+    if (!inFile.is_open() || !outFile.is_open()) {
         std::cerr << "Failed to open file: " << inputFile << " or " << outputFile << std::endl;
         return;
     }
 
     int q;
     inFile >> q;
-
-    std::map<int, int> petalCount;
-    int currentGCD = 0;
-    bool correct = true;
-
-    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<int> numbers;
 
     for (int i = 0; i < q; i++) {
         char operation;
         int n;
         inFile >> operation >> n;
 
-        int expectedGCD;
-        expectedFile >> expectedGCD;
-
         if (operation == '+') {
-            if (petalCount[n] == 0) {  // Only update GCD if this petal count was zero before addition
-                if (currentGCD == 0) {
-                    currentGCD = n;
-                } else {
-                    currentGCD = gcd(currentGCD, n);
-                }
-            }
-            petalCount[n]++;
+            numbers.push_back(n);
         } else if (operation == '-') {
-            petalCount[n]--;
-            if (petalCount[n] == 0) {  // Petal completely removed, need to recalculate GCD
-                petalCount.erase(n);
-                currentGCD = 0;
-                for (auto& p : petalCount) {
-                    if (currentGCD == 0) {
-                        currentGCD = p.first;
-                    } else {
-                        currentGCD = gcd(currentGCD, p.first);
-                        if (currentGCD == 1) break;  // Short-circuit if GCD is 1
-                    }
-                }
+            auto it = std::find(numbers.begin(), numbers.end(), n);
+            if (it != numbers.end()) {
+                numbers.erase(it);
             }
         }
 
-        int outputGCD = (currentGCD == 0 || petalCount.empty()) ? 1 : currentGCD;
-        if (outputGCD != expectedGCD) {
-            correct = false;
-            std::cout << "Mismatch at operation " << i + 1 << ": Expected " << expectedGCD << ", got " << outputGCD << std::endl;
-        }
+        // Brute force recalculating the GCD after each operation
+        int currentGCD = calculateGCD(numbers);
+        outFile << (currentGCD == 0 ? 1 : currentGCD) << std::endl;
     }
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-
-    std::cout << inputFile << ": " << (correct ? "Correct" : "Incorrect") << ", Time: " << std::fixed << std::setprecision(6) << elapsed.count() << "s\n";
 
     inFile.close();
-    expectedFile.close();
+    outFile.close();
 }
 
-
-
-int main() {
-    for (int i = 1; i <= 13; ++i) {
-        if(i==7 || i==11) continue; // Skip files 7 and 11 (as per your requirement
-        std::string index = (i < 10 ? "0" + std::to_string(i) : std::to_string(i));
-        std::string inputFile = "test_cases\\marjetice" + index + ".in";
-        std::string outputFile = "test_cases\\marjetice" + index + ".out";
-        processGCDFile(inputFile, outputFile);
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " <inputFile> <outputFile>" << std::endl;
+        return 1; // Return non-zero value to indicate error
     }
+
+    std::string inputFile = argv[1];
+    std::string outputFile = argv[2];
+    processGCDFileBruteForce(inputFile, outputFile);
     return 0;
 }
