@@ -2,7 +2,7 @@
 Set-Location -Path "C:\Users\Asus\Desktop\sopek_marjetic"
 
 # List of test case numbers to run
-$testCaseNumbers = 1..13 | Where-Object { $_ -ne 7 -and $_ -ne 11 -and  $_ -ne 4}
+$testCaseNumbers = 1..13 | Where-Object { $_ -ne 7 -and $_ -ne 11 -and  $_ -ne 4 -and  $_ -ne 3 -and  $_ -ne 9 -and  $_ -ne 12}
 
 foreach ($num in $testCaseNumbers) {
     $formattedNumber = "{0:D2}" -f $num

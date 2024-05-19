@@ -54,7 +54,7 @@ struct SegmentTree {
 };
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
+    if (argc != 3) {
         cerr << "Usage: ./program input_file" << endl;
         return 1;
     }
@@ -62,6 +62,12 @@ int main(int argc, char* argv[]) {
     ifstream inFile(argv[1]);
     if (!inFile) {
         cerr << "Error opening input file." << endl;
+        return 1;
+    }
+
+    ofstream outFile(argv[2]);
+    if (!outFile) {
+        cerr << "Error opening output file." << endl;
         return 1;
     }
 
@@ -82,7 +88,7 @@ int main(int argc, char* argv[]) {
         }
 
         int result = st.query(); // Get current GCD
-        std::cout << (result == 0 ? 1 : result) << endl; // Output result, if the tree is empty, output 1
+        outFile << (result == 0 ? 1 : result) << endl; // Output result, if the tree is empty, output 1
     }
 
     inFile.close(); // Close input file
