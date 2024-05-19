@@ -1,1 +1,0 @@
-CMakeLists.txt not found in C:\Users\Asus\Desktop\sopek_marjetic Select CMakeLists.txt

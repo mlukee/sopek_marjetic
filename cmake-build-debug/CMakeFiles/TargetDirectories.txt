@@ -1,3 +1,0 @@
-C:/Users/LENOVO/source/repos/SopekMarjetic/sopek_marjetic/cmake-build-debug/CMakeFiles/sopek_marjetic.dir
-C:/Users/LENOVO/source/repos/SopekMarjetic/sopek_marjetic/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/LENOVO/source/repos/SopekMarjetic/sopek_marjetic/cmake-build-debug/CMakeFiles/rebuild_cache.dir
