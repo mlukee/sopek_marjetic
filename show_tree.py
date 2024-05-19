@@ -67,6 +67,7 @@ def process_operations():
         numbers1.append(number)
         segment_tree = SegmentTree(numbers1)
         segment_tree.plot_tree(f"tree_at_operation_{number}")
+        print("test123")
 
 # Assume the filename path to 'tests.txt' is correct
 process_operations()
